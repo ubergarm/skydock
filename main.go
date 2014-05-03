@@ -131,7 +131,6 @@ func heartbeat(uuid string) {
 		if err := updateService(uuid, ttl); err != nil {
 			errorCount++
 			log.Logf(log.ERROR, "%s", err)
-			break
 		}
 	}
 }
