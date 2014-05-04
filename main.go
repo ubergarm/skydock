@@ -117,8 +117,8 @@ func heartbeat(uuid string) {
 	var errorCount int
 	for _ = range time.Tick(time.Duration(beat) * time.Second) {
 		if errorCount > 10 {
-			// if we encountered more than 10 errors just quit
-			log.Logf(log.ERROR, "aborting heartbeat for %s after 10 errors", uuid)
+			// if we encountered more than sequential 10 errors just quit
+			log.Logf(log.ERROR, "aborting heartbeat for %s after sequential 10 errors", uuid)
 			return
 		}
 
@@ -130,7 +130,11 @@ func heartbeat(uuid string) {
 
 		if err := updateService(uuid, ttl); err != nil {
 			errorCount++
-			log.Logf(log.ERROR, "%s", err)
+			log.Logf(log.ERROR, "updateService(): %s", err)
+		} else {
+			if errorCount--; errorCount < 0 {
+				errorCount = 0
+			}
 		}
 	}
 }
